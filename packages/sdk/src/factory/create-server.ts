@@ -13,7 +13,6 @@ import type {
   OutputFormat,
   DocumentRequest,
   DocumentResponse,
-  DocumentTree,
 } from '@zen-sci/core';
 
 import { Logger } from '../logging/logger.js';

@@ -228,7 +228,7 @@ export class SlideParser {
   /**
    * Detect slide layout based on content.
    */
-  private detectLayout(content: string, slideTitle?: string): SlideLayout | undefined {
+  private detectLayout(content: string, _slideTitle?: string): SlideLayout | undefined {
     // Check for explicit layout comment
     if (content.includes('<!-- layout: two-column -->')) {
       return 'two-column';

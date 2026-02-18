@@ -7,7 +7,6 @@ import {
   MarkdownParser,
   CitationManager,
 } from '@zen-sci/core';
-import type { DocumentRequest, OutputFormat } from '@zen-sci/core';
 import type { ZenSciContext } from '@zen-sci/sdk';
 import { generateRequestId } from '@zen-sci/sdk';
 

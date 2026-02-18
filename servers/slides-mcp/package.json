@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
     "build:app": "cd app && vite build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "^1.0.1",

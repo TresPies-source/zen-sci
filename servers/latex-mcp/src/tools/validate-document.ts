@@ -5,7 +5,6 @@ import {
   MarkdownParser,
   MathValidator,
   CitationManager,
-  BibTeXParser,
 } from '@zen-sci/core';
 import type { ZenSciContext } from '@zen-sci/sdk';
 

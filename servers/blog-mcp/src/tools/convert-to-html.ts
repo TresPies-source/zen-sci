@@ -57,7 +57,7 @@ function countWords(text: string): number {
   // Strip frontmatter
   const cleaned = text.replace(/^---[\s\S]*?---\s*/, '');
   const words = cleaned
-    .replace(/[#*`~>\[\]()!|]/g, ' ')
+    .replace(/[#*`~>[\]()!|]/g, ' ')
     .split(/\s+/)
     .filter((w) => w.length > 0);
   return words.length;

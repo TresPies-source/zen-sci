@@ -1,6 +1,6 @@
 // packages/sdk/src/utils/temp-file-manager.ts
 
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import { rm, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -57,7 +57,6 @@ export class TempFileManager {
     this.cleaned = true;
     activeManagers.delete(this);
     try {
-      const { rmSync } = require('node:fs') as typeof import('node:fs');
       rmSync(this.baseDir, { recursive: true, force: true });
     } catch {
       // Ignore errors during process shutdown
