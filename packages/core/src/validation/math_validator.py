@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
-"""Math expression validator using SymPy."""
+"""Math expression validator using SymPy.
+
+Protocol:
+  - Input: JSON on stdin with { action, expression }
+  - Output: JSON on stdout with { valid, error?, result?, unavailable? }
+  - If SymPy is not installed, returns {"unavailable": true} immediately.
+"""
 import sys
 import json
+
+# Check SymPy availability upfront
+try:
+    from sympy.parsing.latex import parse_latex
+    from sympy import sympify, simplify
+    SYMPY_AVAILABLE = True
+except ImportError:
+    SYMPY_AVAILABLE = False
 
 
 def validate_expression(expr: str) -> dict:
     try:
-        from sympy.parsing.latex import parse_latex
         parsed = parse_latex(expr)
         return {"valid": True, "result": str(parsed)}
-    except Exception as e:
-        # Try simpler validation
+    except Exception:
+        # Fallback: try sympify for non-LaTeX expressions
         try:
-            from sympy import sympify
             parsed = sympify(expr)
             return {"valid": True, "result": str(parsed)}
         except Exception as e2:
@@ -21,8 +33,6 @@ def validate_expression(expr: str) -> dict:
 
 def simplify_expression(expr: str) -> dict:
     try:
-        from sympy.parsing.latex import parse_latex
-        from sympy import simplify
         parsed = parse_latex(expr)
         simplified = simplify(parsed)
         return {"valid": True, "result": str(simplified)}
@@ -32,7 +42,6 @@ def simplify_expression(expr: str) -> dict:
 
 def to_ascii(expr: str) -> dict:
     try:
-        from sympy.parsing.latex import parse_latex
         parsed = parse_latex(expr)
         return {"valid": True, "result": str(parsed)}
     except Exception as e:
@@ -41,6 +50,11 @@ def to_ascii(expr: str) -> dict:
 
 def main():
     input_data = json.loads(sys.stdin.read())
+
+    if not SYMPY_AVAILABLE:
+        print(json.dumps({"unavailable": True}))
+        return
+
     action = input_data.get("action", "validate")
     expression = input_data.get("expression", "")
 

@@ -1,0 +1,31 @@
+{
+  "og": {
+    "title": "Understanding Quantum Entanglement",
+    "type": "article",
+    "description": "A beginner-friendly introduction to quantum entanglement and its applications in modern computing.",
+    "publishedTime": "2026-01-20",
+    "author": "Dr. Alice Chen",
+    "tags": ["quantum-physics", "entanglement", "research"],
+    "siteName": "ZenSci Blog",
+    "url": "https://blog.zensci.dev/posts/quantum-entanglement"
+  },
+  "twitter": {
+    "card": "summary",
+    "site": "@zensci",
+    "title": "Understanding Quantum Entanglement",
+    "description": "A beginner-friendly introduction to quantum entanglement and its applications in modern computing."
+  },
+  "structuredData": {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Understanding Quantum Entanglement",
+    "description": "A beginner-friendly introduction to quantum entanglement and its applications in modern computing.",
+    "author": { "@type": "Person", "name": "Dr. Alice Chen" },
+    "datePublished": "2026-01-20",
+    "keywords": "quantum-physics, entanglement, research",
+    "publisher": { "@type": "Organization", "name": "ZenSci Blog" }
+  },
+  "canonical": "https://blog.zensci.dev/posts/quantum-entanglement",
+  "lang": "en",
+  "description": "A beginner-friendly introduction to quantum entanglement and its applications in modern computing."
+}

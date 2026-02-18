@@ -1,0 +1,4 @@
+pypandoc>=1.12
+sympy>=1.12
+bibtexparser>=1.4.0
+pylatexenc>=2.10

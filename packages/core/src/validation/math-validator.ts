@@ -26,6 +26,7 @@ interface PythonResponse {
   valid: boolean;
   error?: string;
   result?: string;
+  unavailable?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -149,11 +150,11 @@ export class MathValidator {
 
     const response = await callPython({ action: 'validate', expression: latex });
 
-    if (response === null) {
+    if (response === null || response.unavailable) {
       warnings.push({
         code: 'MATH_PYTHON_UNAVAILABLE',
         message:
-          'Python is not available; math validation was skipped. Install python3 with SymPy for full validation.',
+          'Python/SymPy is not available; math validation was skipped. Install python3 with SymPy for full validation.',
         suggestion: 'pip install sympy',
       });
       return makeResult(errors, warnings);
@@ -202,7 +203,7 @@ export class MathValidator {
   async simplify(latex: string): Promise<string> {
     const response = await callPython({ action: 'simplify', expression: latex });
 
-    if (response === null) {
+    if (response === null || response.unavailable) {
       return latex;
     }
 
@@ -220,7 +221,7 @@ export class MathValidator {
   async toAscii(latex: string): Promise<string> {
     const response = await callPython({ action: 'to_ascii', expression: latex });
 
-    if (response === null) {
+    if (response === null || response.unavailable) {
       return latex;
     }
 

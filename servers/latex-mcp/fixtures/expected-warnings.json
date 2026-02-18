@@ -1,0 +1,17 @@
+{
+  "scenarios": {
+    "valid-document": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "unresolved-citation": {
+      "errors": 0,
+      "warnings": 1,
+      "warning_codes": ["unresolved-citation"]
+    },
+    "invalid-math": {
+      "errors": 1,
+      "error_codes": ["math-validation-failed"]
+    }
+  }
+}
