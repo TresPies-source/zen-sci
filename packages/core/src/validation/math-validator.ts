@@ -43,7 +43,8 @@ const DEFAULT_TIMEOUT = 5_000; // 5 seconds
  * Returns `null` when Python is unavailable (no error thrown).
  */
 async function callPython(request: PythonRequest): Promise<PythonResponse | null> {
-  const pythonPaths = ['python3', 'python'];
+  const venvPython = join(__dirname, '..', '..', '..', '..', '.venv', 'bin', 'python3');
+  const pythonPaths = [venvPython, 'python3', 'python'];
 
   for (const pythonBin of pythonPaths) {
     try {

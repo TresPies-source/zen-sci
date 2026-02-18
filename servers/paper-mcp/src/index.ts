@@ -3,12 +3,22 @@
 
 import { z } from 'zod';
 import { createZenSciServer } from '@zen-sci/sdk';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { paperManifest } from './manifest.js';
 import { convertToPaper } from './tools/convert-to-paper.js';
 import type { ConvertToPaperArgs } from './tools/convert-to-paper.js';
 import { validateSubmission } from './tools/validate-submission.js';
 import type { ValidateSubmissionArgs } from './tools/validate-submission.js';
 import { listTemplates } from './tools/list-templates.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'paper-mcp',
@@ -33,23 +43,33 @@ const PaperFormatSchema = z
   .describe('Target paper format');
 
 // ---------------------------------------------------------------------------
-// convert_to_paper
+// convert_to_paper (with MCP App UI)
 // ---------------------------------------------------------------------------
 
-server.tool(
+const RESOURCE_URI = 'ui://paper-mcp/preview.html';
+
+registerAppTool(
+  server,
   'convert_to_paper',
-  'Convert markdown to publication-ready LaTeX for IEEE, ACM, or arXiv formats',
   {
-    source: z.string().describe('Markdown source content'),
-    title: z.string().describe('Paper title'),
-    authors: z.array(AuthorSchema).describe('List of paper authors'),
-    bibliography: z.string().optional().describe('BibTeX bibliography content'),
-    abstract: z.string().optional().describe('Paper abstract'),
-    format: PaperFormatSchema,
-    keywords: z
-      .array(z.string())
-      .optional()
-      .describe('Paper keywords'),
+    description: 'Convert markdown to publication-ready LaTeX for IEEE, ACM, or arXiv formats',
+    inputSchema: {
+      source: z.string().describe('Markdown source content'),
+      title: z.string().describe('Paper title'),
+      authors: z.array(AuthorSchema).describe('List of paper authors'),
+      bibliography: z.string().optional().describe('BibTeX bibliography content'),
+      abstract: z.string().optional().describe('Paper abstract'),
+      format: PaperFormatSchema,
+      keywords: z
+        .array(z.string())
+        .optional()
+        .describe('Paper keywords'),
+    },
+    _meta: {
+      ui: {
+        resourceUri: RESOURCE_URI,
+      },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -121,4 +141,26 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// MCP App Resource: Paper Preview UI
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'Paper Preview',
+  RESOURCE_URI,
+  {
+    description: 'Interactive academic paper preview',
+  },
+  async () => ({
+    contents: [{
+      uri: RESOURCE_URI,
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );

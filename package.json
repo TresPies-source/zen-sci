@@ -6,7 +6,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "pnpm -r run build",
+    "build:apps": "pnpm --filter './servers/*/app' run build",
+    "build:all": "pnpm run build && pnpm run build:apps",
     "test": "pnpm -r run test",
+    "test:apps": "pnpm --filter './servers/*/app' run test",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck"
   },

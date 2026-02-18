@@ -11,6 +11,16 @@ import type { ValidateComplianceArgs, ValidateComplianceSection } from './tools/
 import { checkFormat } from './tools/check-format.js';
 import type { CheckFormatArgs } from './tools/check-format.js';
 import type { GrantPlatform } from './formatting/compliance-checker.js';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'grant-mcp',
@@ -30,18 +40,24 @@ const sectionSchema = z.object({
   title: z.string().optional().describe('Optional custom section title'),
 });
 
-server.tool(
+registerAppTool(
+  server,
   'generate_proposal',
-  'Convert structured grant sections to funder-compliant LaTeX format (NIH, NSF, ERC)',
   {
-    sections: z.array(sectionSchema).describe('Array of proposal sections'),
-    funder: z.enum(['nih', 'nsf', 'erc']).describe('Funding agency'),
-    programType: z.string().describe('Program type (e.g., R01, CAREER, standard)'),
-    bibliography: z.string().optional().describe('BibTeX bibliography content'),
-    options: z.object({
-      outputFormat: z.enum(['grant-latex', 'docx']).optional().describe('Output format'),
-      engine: z.string().optional().describe('LaTeX engine'),
-    }).optional().describe('Generation options'),
+    description: 'Convert structured grant sections to funder-compliant LaTeX format (NIH, NSF, ERC)',
+    inputSchema: {
+      sections: z.array(sectionSchema).describe('Array of proposal sections'),
+      funder: z.enum(['nih', 'nsf', 'erc']).describe('Funding agency'),
+      programType: z.string().describe('Program type (e.g., R01, CAREER, standard)'),
+      bibliography: z.string().optional().describe('BibTeX bibliography content'),
+      options: z.object({
+        outputFormat: z.enum(['grant-latex', 'docx']).optional().describe('Output format'),
+        engine: z.string().optional().describe('LaTeX engine'),
+      }).optional().describe('Generation options'),
+    },
+    _meta: {
+      ui: { resourceUri: 'ui://grant-mcp/dashboard.html' },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -135,4 +151,24 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// MCP App: Grant Compliance Dashboard
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'Grant Compliance Dashboard',
+  'ui://grant-mcp/dashboard.html',
+  { description: 'Interactive grant compliance dashboard' },
+  async () => ({
+    contents: [{
+      uri: 'ui://grant-mcp/dashboard.html',
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );

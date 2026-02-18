@@ -3,11 +3,21 @@
 
 import { z } from 'zod';
 import { createZenSciServer } from '@zen-sci/sdk';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { newsletterManifest } from './manifest.js';
 import { convertToEmail } from './tools/convert-to-email.js';
 import type { ConvertToEmailArgs } from './tools/convert-to-email.js';
 import { validateEmail } from './tools/validate-email.js';
 import type { ValidateEmailArgs } from './tools/validate-email.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'newsletter-mcp',
@@ -21,36 +31,42 @@ const { server } = ctx;
 // convert_to_email
 // ---------------------------------------------------------------------------
 
-server.tool(
+registerAppTool(
+  server,
   'convert_to_email',
-  'Convert markdown to a responsive, email-safe HTML newsletter with CAN-SPAM compliant footer',
   {
-    source: z.string().describe('Markdown source content'),
-    subject: z.string().describe('Email subject line'),
-    fromName: z.string().optional().describe('Sender display name'),
-    fromEmail: z.string().optional().describe('Sender email address'),
-    replyTo: z.string().optional().describe('Reply-to email address'),
-    platform: z
-      .enum(['mailchimp', 'substack', 'smtp', 'generic'])
-      .optional()
-      .describe('Target email platform (default: generic)'),
-    previewText: z
-      .string()
-      .optional()
-      .describe('Preview text shown in email client list view'),
-    brandColor: z
-      .string()
-      .optional()
-      .describe('Brand color hex code (default: #1a73e8)'),
-    logoUrl: z.string().optional().describe('URL to the logo image'),
-    footerText: z
-      .string()
-      .optional()
-      .describe('Custom footer text (default: subscription notice)'),
-    unsubscribeUrl: z
-      .string()
-      .optional()
-      .describe('Unsubscribe link URL (CAN-SPAM compliance)'),
+    description: 'Convert markdown to a responsive, email-safe HTML newsletter with CAN-SPAM compliant footer',
+    inputSchema: {
+      source: z.string().describe('Markdown source content'),
+      subject: z.string().describe('Email subject line'),
+      fromName: z.string().optional().describe('Sender display name'),
+      fromEmail: z.string().optional().describe('Sender email address'),
+      replyTo: z.string().optional().describe('Reply-to email address'),
+      platform: z
+        .enum(['mailchimp', 'substack', 'smtp', 'generic'])
+        .optional()
+        .describe('Target email platform (default: generic)'),
+      previewText: z
+        .string()
+        .optional()
+        .describe('Preview text shown in email client list view'),
+      brandColor: z
+        .string()
+        .optional()
+        .describe('Brand color hex code (default: #1a73e8)'),
+      logoUrl: z.string().optional().describe('URL to the logo image'),
+      footerText: z
+        .string()
+        .optional()
+        .describe('Custom footer text (default: subscription notice)'),
+      unsubscribeUrl: z
+        .string()
+        .optional()
+        .describe('Unsubscribe link URL (CAN-SPAM compliance)'),
+    },
+    _meta: {
+      ui: { resourceUri: 'ui://newsletter-mcp/preview.html' },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -99,4 +115,24 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// App resource: Newsletter Preview UI
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'Newsletter Preview',
+  'ui://newsletter-mcp/preview.html',
+  { description: 'Interactive email newsletter preview' },
+  async () => ({
+    contents: [{
+      uri: 'ui://newsletter-mcp/preview.html',
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );

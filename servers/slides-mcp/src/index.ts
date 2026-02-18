@@ -9,6 +9,16 @@ import type { ConvertToSlidesArgs } from './tools/convert-to-slides.js';
 import { validateDeck } from './tools/validate-deck.js';
 import type { ValidateDeckArgs } from './tools/validate-deck.js';
 import { listSlideThemes } from './tools/list-slide-themes.js';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'slides-mcp',
@@ -22,33 +32,39 @@ const { server } = ctx;
 // convert_to_slides
 // ---------------------------------------------------------------------------
 
-server.tool(
+registerAppTool(
+  server,
   'convert_to_slides',
-  'Convert markdown to Beamer LaTeX or Reveal.js presentation slides',
   {
-    source: z.string().describe('Markdown source content with slides separated by ---'),
-    title: z.string().optional().describe('Presentation title (overrides detected title)'),
-    author: z.string().optional().describe('Presentation author'),
-    format: z
-      .enum(['beamer', 'revealjs', 'both'])
-      .describe('Output format: beamer for LaTeX/PDF, revealjs for HTML, or both'),
-    options: z
-      .object({
-        theme: z.string().optional().describe('Presentation theme'),
-        colorTheme: z.string().optional().describe('Beamer color theme'),
-        aspectRatio: z
-          .enum(['169', '43', '1610'])
-          .optional()
-          .describe('Slide aspect ratio (Beamer)'),
-        showNotes: z.boolean().optional().describe('Show speaker notes (Beamer)'),
-        fontTheme: z.string().optional().describe('Beamer font theme'),
-        transition: z.string().optional().describe('Slide transition (Reveal.js)'),
-        controls: z.boolean().optional().describe('Show controls (Reveal.js)'),
-        progress: z.boolean().optional().describe('Show progress bar (Reveal.js)'),
-        katexEnabled: z.boolean().optional().describe('Enable KaTeX math rendering (Reveal.js)'),
-      })
-      .optional()
-      .describe('Renderer-specific options'),
+    description: 'Convert markdown to Beamer LaTeX or Reveal.js presentation slides',
+    inputSchema: {
+      source: z.string().describe('Markdown source content with slides separated by ---'),
+      title: z.string().optional().describe('Presentation title (overrides detected title)'),
+      author: z.string().optional().describe('Presentation author'),
+      format: z
+        .enum(['beamer', 'revealjs', 'both'])
+        .describe('Output format: beamer for LaTeX/PDF, revealjs for HTML, or both'),
+      options: z
+        .object({
+          theme: z.string().optional().describe('Presentation theme'),
+          colorTheme: z.string().optional().describe('Beamer color theme'),
+          aspectRatio: z
+            .enum(['169', '43', '1610'])
+            .optional()
+            .describe('Slide aspect ratio (Beamer)'),
+          showNotes: z.boolean().optional().describe('Show speaker notes (Beamer)'),
+          fontTheme: z.string().optional().describe('Beamer font theme'),
+          transition: z.string().optional().describe('Slide transition (Reveal.js)'),
+          controls: z.boolean().optional().describe('Show controls (Reveal.js)'),
+          progress: z.boolean().optional().describe('Show progress bar (Reveal.js)'),
+          katexEnabled: z.boolean().optional().describe('Enable KaTeX math rendering (Reveal.js)'),
+        })
+        .optional()
+        .describe('Renderer-specific options'),
+    },
+    _meta: {
+      ui: { resourceUri: 'ui://slides-mcp/preview.html' },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -118,4 +134,24 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// App Resource: Slides Preview UI
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'Slides Preview',
+  'ui://slides-mcp/preview.html',
+  { description: 'Interactive slide deck preview' },
+  async () => ({
+    contents: [{
+      uri: 'ui://slides-mcp/preview.html',
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );

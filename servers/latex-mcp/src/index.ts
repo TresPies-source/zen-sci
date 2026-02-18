@@ -3,6 +3,14 @@
 
 import { z } from 'zod';
 import { createZenSciServer } from '@zen-sci/sdk';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { latexManifest } from './manifest.js';
 import { convertToPdf } from './tools/convert-to-pdf.js';
 import type { ConvertToPdfArgs } from './tools/convert-to-pdf.js';
@@ -10,6 +18,8 @@ import { validateDocument } from './tools/validate-document.js';
 import type { ValidateDocumentArgs } from './tools/validate-document.js';
 import { checkCitations } from './tools/check-citations.js';
 import type { CheckCitationsArgs } from './tools/check-citations.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'latex-mcp',
@@ -20,27 +30,37 @@ const ctx = createZenSciServer({
 const { server } = ctx;
 
 // ---------------------------------------------------------------------------
-// convert_to_pdf
+// convert_to_pdf (with MCP App UI)
 // ---------------------------------------------------------------------------
 
-server.tool(
+const RESOURCE_URI = 'ui://latex-mcp/preview.html';
+
+registerAppTool(
+  server,
   'convert_to_pdf',
-  'Convert markdown to publication-ready LaTeX and PDF',
   {
-    source: z.string().describe('Markdown source content'),
-    title: z.string().optional().describe('Document title'),
-    author: z.array(z.string()).optional().describe('Author list'),
-    bibliography: z.string().optional().describe('BibTeX bibliography content'),
-    bibliography_style: z.string().optional().describe('Citation style (apa, ieee, etc.)'),
-    latex_preamble: z.string().optional().describe('Custom LaTeX preamble'),
-    output_dir: z.string().optional().describe('Output directory path'),
-    options: z.object({
-      engine: z.string().optional().describe('LaTeX engine (pdflatex, xelatex, lualatex)'),
-      toc: z.boolean().optional().describe('Generate table of contents'),
-      geometry: z.string().optional().describe('Page geometry string'),
-      font: z.string().optional().describe('Font family'),
-      draft_mode: z.boolean().optional().describe('Enable draft mode'),
-    }).optional().describe('Conversion options'),
+    description: 'Convert markdown to publication-ready LaTeX and PDF',
+    inputSchema: {
+      source: z.string().describe('Markdown source content'),
+      title: z.string().optional().describe('Document title'),
+      author: z.array(z.string()).optional().describe('Author list'),
+      bibliography: z.string().optional().describe('BibTeX bibliography content'),
+      bibliography_style: z.string().optional().describe('Citation style (apa, ieee, etc.)'),
+      latex_preamble: z.string().optional().describe('Custom LaTeX preamble'),
+      output_dir: z.string().optional().describe('Output directory path'),
+      options: z.object({
+        engine: z.string().optional().describe('LaTeX engine (pdflatex, xelatex, lualatex)'),
+        toc: z.boolean().optional().describe('Generate table of contents'),
+        geometry: z.string().optional().describe('Page geometry string'),
+        font: z.string().optional().describe('Font family'),
+        draft_mode: z.boolean().optional().describe('Enable draft mode'),
+      }).optional().describe('Conversion options'),
+    },
+    _meta: {
+      ui: {
+        resourceUri: RESOURCE_URI,
+      },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -112,4 +132,26 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// MCP App Resource: LaTeX Preview UI
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'LaTeX Preview',
+  RESOURCE_URI,
+  {
+    description: 'Interactive LaTeX document preview',
+  },
+  async () => ({
+    contents: [{
+      uri: RESOURCE_URI,
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );

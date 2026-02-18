@@ -1,0 +1,61 @@
+:root {
+  --zen-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --zen-font-sans: system-ui, -apple-system, sans-serif;
+  --zen-radius: 6px;
+  --zen-border: 1px solid var(--mcp-border, #e0e0e0);
+  --zen-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --zen-tab-active-bg: var(--mcp-accent, #2563eb);
+  --zen-tab-active-fg: #ffffff;
+}
+
+.zen-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: var(--zen-border);
+  margin-bottom: 12px;
+}
+
+.zen-tab {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--zen-radius) var(--zen-radius) 0 0;
+  font-size: 13px;
+  color: var(--mcp-text-secondary, #666);
+}
+
+.zen-tab.active {
+  background: var(--zen-tab-active-bg);
+  color: var(--zen-tab-active-fg);
+}
+
+.zen-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.zen-badge.pass  { background: #d4edda; color: #155724; }
+.zen-badge.warn  { background: #fff3cd; color: #856404; }
+.zen-badge.fail  { background: #f8d7da; color: #721c24; }
+.zen-badge.info  { background: #d1ecf1; color: #0c5460; }
+
+.zen-meta-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.zen-meta-table td { padding: 4px 8px; border-bottom: var(--zen-border); }
+.zen-meta-table td:first-child { color: var(--mcp-text-secondary, #666); width: 40%; }
+
+.zen-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--mcp-border, #e0e0e0);
+  border-top-color: var(--mcp-accent, #2563eb);
+  border-radius: 50%;
+  animation: zen-spin 0.8s linear infinite;
+}
+
+@keyframes zen-spin {
+  to { transform: rotate(360deg); }
+}

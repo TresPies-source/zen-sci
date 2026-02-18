@@ -9,9 +9,11 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
+    "build:app": "cd app && vite build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.0.1",
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@zen-sci/core": "workspace:*",
     "@zen-sci/sdk": "workspace:*",

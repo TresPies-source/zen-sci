@@ -3,6 +3,14 @@
 
 import { z } from 'zod';
 import { createZenSciServer } from '@zen-sci/sdk';
+import {
+  registerAppTool,
+  registerAppResource,
+  RESOURCE_MIME_TYPE,
+} from '@modelcontextprotocol/ext-apps/server';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { blogManifest } from './manifest.js';
 import { convertToHtml } from './tools/convert-to-html.js';
 import type { ConvertToHtmlArgs } from './tools/convert-to-html.js';
@@ -10,6 +18,8 @@ import { generateFeedTool } from './tools/generate-feed.js';
 import type { GenerateFeedArgs } from './tools/generate-feed.js';
 import { validatePost } from './tools/validate-post.js';
 import type { ValidatePostArgs } from './tools/validate-post.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ctx = createZenSciServer({
   name: 'blog-mcp',
@@ -20,40 +30,50 @@ const ctx = createZenSciServer({
 const { server } = ctx;
 
 // ---------------------------------------------------------------------------
-// convert_to_html
+// convert_to_html (with MCP App UI)
 // ---------------------------------------------------------------------------
 
-server.tool(
+const RESOURCE_URI = 'ui://blog-mcp/preview.html';
+
+registerAppTool(
+  server,
   'convert_to_html',
-  'Convert markdown to a responsive HTML blog post with SEO metadata',
   {
-    source: z.string().describe('Markdown source content'),
-    title: z.string().optional().describe('Blog post title (overrides frontmatter)'),
-    author: z.string().optional().describe('Blog post author (overrides frontmatter)'),
-    bibliography: z.string().optional().describe('BibTeX bibliography content'),
-    options: z
-      .object({
-        toc: z.boolean().optional().describe('Generate table of contents'),
-        theme: z
-          .enum(['light', 'dark', 'system'])
-          .optional()
-          .describe('CSS theme'),
-        selfContained: z
-          .boolean()
-          .optional()
-          .describe('Produce a self-contained HTML file'),
-        seoSiteUrl: z.string().optional().describe('Site URL for SEO metadata'),
-        seoSiteName: z
-          .string()
-          .optional()
-          .describe('Site name for SEO metadata'),
-        twitterHandle: z
-          .string()
-          .optional()
-          .describe('Twitter handle for card metadata'),
-      })
-      .optional()
-      .describe('Conversion options'),
+    description: 'Convert markdown to a responsive HTML blog post with SEO metadata',
+    inputSchema: {
+      source: z.string().describe('Markdown source content'),
+      title: z.string().optional().describe('Blog post title (overrides frontmatter)'),
+      author: z.string().optional().describe('Blog post author (overrides frontmatter)'),
+      bibliography: z.string().optional().describe('BibTeX bibliography content'),
+      options: z
+        .object({
+          toc: z.boolean().optional().describe('Generate table of contents'),
+          theme: z
+            .enum(['light', 'dark', 'system'])
+            .optional()
+            .describe('CSS theme'),
+          selfContained: z
+            .boolean()
+            .optional()
+            .describe('Produce a self-contained HTML file'),
+          seoSiteUrl: z.string().optional().describe('Site URL for SEO metadata'),
+          seoSiteName: z
+            .string()
+            .optional()
+            .describe('Site name for SEO metadata'),
+          twitterHandle: z
+            .string()
+            .optional()
+            .describe('Twitter handle for card metadata'),
+        })
+        .optional()
+        .describe('Conversion options'),
+    },
+    _meta: {
+      ui: {
+        resourceUri: RESOURCE_URI,
+      },
+    },
   },
   async (rawArgs) => {
     // Strip undefined values from Zod output to satisfy exactOptionalPropertyTypes
@@ -154,4 +174,26 @@ server.tool(
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
     };
   },
+);
+
+// ---------------------------------------------------------------------------
+// MCP App Resource: Blog Preview UI
+// ---------------------------------------------------------------------------
+
+const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+
+registerAppResource(
+  server,
+  'Blog Preview',
+  RESOURCE_URI,
+  {
+    description: 'Interactive blog post preview with SEO analysis',
+  },
+  async () => ({
+    contents: [{
+      uri: RESOURCE_URI,
+      mimeType: RESOURCE_MIME_TYPE,
+      text: await fs.readFile(APP_DIST_PATH, 'utf-8'),
+    }],
+  }),
 );
