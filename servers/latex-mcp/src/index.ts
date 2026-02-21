@@ -19,7 +19,8 @@ import type { ValidateDocumentArgs } from './tools/validate-document.js';
 import { checkCitations } from './tools/check-citations.js';
 import type { CheckCitationsArgs } from './tools/check-citations.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ctx = createZenSciServer({
   name: 'latex-mcp',
@@ -138,7 +139,12 @@ server.tool(
 // MCP App Resource: LaTeX Preview UI
 // ---------------------------------------------------------------------------
 
-const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+// Resolve app-dist path for both unbundled (dist/src/) and bundled (dist/) layouts.
+// In bundled mode __dirname is <server>/dist/ so ../app-dist/ is correct.
+// In unbundled mode __dirname is <server>/dist/ (tsc root) so ../../app-dist/ is correct.
+const APP_DIST_PATH = __filename.includes('bundle')
+  ? path.resolve(__dirname, '../app-dist/index.html')
+  : path.resolve(__dirname, '../../app-dist/index.html');
 
 registerAppResource(
   server,
@@ -155,3 +161,6 @@ registerAppResource(
     }],
   }),
 );
+
+// Start the MCP server — connects stdio transport and begins processing requests.
+ctx.start();

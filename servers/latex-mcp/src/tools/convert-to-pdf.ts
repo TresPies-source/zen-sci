@@ -12,7 +12,13 @@ import { generateRequestId } from '@zen-sci/sdk';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const LATEX_ENGINE_PATH = join(__dirname, '../../engine/latex_engine.py');
+// Resolve engine path for both unbundled (dist/tools/) and bundled (dist/) layouts.
+// In unbundled mode __dirname is <server>/dist/tools/ → ../../engine/ works.
+// In bundled mode __dirname is <server>/dist/ → ../engine/ is needed.
+// Detect bundle: if basename of __filename contains "bundle", use ../engine.
+const LATEX_ENGINE_PATH = __filename.includes('bundle')
+  ? join(__dirname, '../engine/latex_engine.py')
+  : join(__dirname, '../../engine/latex_engine.py');
 
 export interface ConvertToPdfArgs {
   source: string;

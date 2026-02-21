@@ -37,7 +37,7 @@ export function createZenSciServer(config: ZenSciServerConfig): ZenSciContext {
   const errorHandler = new MCPErrorHandler();
   const tempFileManager = new TempFileManager(name);
   const artifactManager = new ArtifactManager();
-  const pythonEngine = new PythonEngine(logger);
+  const pythonEngine = new PythonEngine(logger, process.env.PYTHON_PATH);
 
   // Create MCP Server (SDK v2 high-level API)
   const server = new McpServer({ name, version });

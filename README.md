@@ -22,20 +22,22 @@ zen-sci/
 ├── packages/
 │   ├── core/               # Shared parsing, citation, validation, pipeline (129 tests, 91% coverage)
 │   └── sdk/                # createZenSciServer() factory, runConversionPipeline(), ModuleManifest
-├── servers/
-│   ├── latex-mcp/          # LaTeX + PDF (v0.1) — flagship. 37 tests.
-│   │   └── app/            # PDF.js viewer + LaTeX source tabs + citation dashboard
-│   ├── blog-mcp/           # HTML blog (v0.2). 76 tests. SEO, KaTeX, RSS.
-│   │   └── app/            # Live HTML preview + SEO/OG validator
-│   ├── slides-mcp/         # Beamer + Reveal.js (v0.3). 34 tests.
-│   │   └── app/            # Beamer PDF + Reveal.js live preview + speaker notes
-│   ├── newsletter-mcp/     # MJML email (v0.3). 63 tests. CAN-SPAM compliance.
-│   │   └── app/            # Desktop/Mobile/Dark Mode email preview + CAN-SPAM panel
-│   ├── grant-mcp/          # NIH/NSF grant proposals (v0.4). 50 tests.
-│   │   └── app/            # Compliance dashboard + section checklist + agency selector
-│   └── paper-mcp/          # IEEE/ACM/arXiv papers (v0.5). 36 tests.
-│       └── app/            # PDF.js viewer + format selector + author sidebar
-└── engines/                # Python processing engines (pandoc, SymPy, BibTeX)
+└── servers/
+    ├── latex-mcp/          # LaTeX + PDF (v0.1) — flagship. 37 tests.
+    │   ├── app/            # PDF.js viewer + LaTeX source tabs + citation dashboard
+    │   └── engine/         # Python: latex_engine.py, citation_engine.py, math_validator.py
+    ├── blog-mcp/           # HTML blog (v0.2). 76 tests. SEO, KaTeX, RSS.
+    │   └── app/            # Live HTML preview + SEO/OG validator
+    ├── slides-mcp/         # Beamer + Reveal.js (v0.3). 34 tests.
+    │   ├── app/            # Beamer PDF + Reveal.js live preview + speaker notes
+    │   └── engine/         # Python: slides_engine.py
+    ├── newsletter-mcp/     # MJML email (v0.3). 63 tests. CAN-SPAM compliance.
+    │   └── app/            # Desktop/Mobile/Dark Mode email preview + CAN-SPAM panel
+    ├── grant-mcp/          # NIH/NSF grant proposals (v0.4). 50 tests.
+    │   ├── app/            # Compliance dashboard + section checklist + agency selector
+    │   └── engine/         # Python: grant_engine.py, compliance_validator.py
+    └── paper-mcp/          # IEEE/ACM/arXiv papers (v0.5). 36 tests.
+        └── app/            # PDF.js viewer + format selector + author sidebar
 ```
 
 ## Tech Stack
@@ -93,4 +95,4 @@ These are optional for development — servers gracefully degrade when system de
 
 ---
 
-*Last updated: 2026-02-18*
+*Last updated: 2026-02-19*

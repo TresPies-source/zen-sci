@@ -17,7 +17,8 @@ import type { ConvertToEmailArgs } from './tools/convert-to-email.js';
 import { validateEmail } from './tools/validate-email.js';
 import type { ValidateEmailArgs } from './tools/validate-email.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ctx = createZenSciServer({
   name: 'newsletter-mcp',
@@ -121,7 +122,10 @@ server.tool(
 // App resource: Newsletter Preview UI
 // ---------------------------------------------------------------------------
 
-const APP_DIST_PATH = path.resolve(__dirname, '../../app-dist/index.html');
+// Resolve app-dist path for both unbundled (dist/src/) and bundled (dist/) layouts.
+const APP_DIST_PATH = __filename.includes('bundle')
+  ? path.resolve(__dirname, '../app-dist/index.html')
+  : path.resolve(__dirname, '../../app-dist/index.html');
 
 registerAppResource(
   server,
@@ -136,3 +140,6 @@ registerAppResource(
     }],
   }),
 );
+
+// Start the MCP server — connects stdio transport and begins processing requests.
+ctx.start();

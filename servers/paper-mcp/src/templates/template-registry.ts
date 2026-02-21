@@ -38,7 +38,12 @@ export type PaperFormat = 'paper-ieee' | 'paper-acm' | 'paper-arxiv';
 function resolvePreamblePath(format: PaperFormat): string {
   // Template directories use short names: ieee, acm, arxiv (without the 'paper-' prefix)
   const dirName = format.replace(/^paper-/, '');
-  return join(__dirname, '../../templates', dirName, 'preamble.tex');
+  // In bundled mode __dirname is <server>/dist/ → ../templates/ is correct.
+  // In unbundled mode __dirname is <server>/dist/templates/ → ../../templates/ is correct.
+  const templatesBase = __filename.includes('bundle')
+    ? join(__dirname, '../templates')
+    : join(__dirname, '../../templates');
+  return join(templatesBase, dirName, 'preamble.tex');
 }
 
 /**
