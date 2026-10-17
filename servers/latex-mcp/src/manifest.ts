@@ -6,7 +6,7 @@ import type { ModuleManifest } from '@zen-sci/sdk';
 export const latexManifest: ModuleManifest = {
   id: 'latex-mcp',
   name: 'LaTeX MCP',
-  version: '0.1.0',
+  version: '0.5.0-alpha.1',
   description:
     'Converts markdown to publication-ready LaTeX and PDF, with math validation, citation resolution, and cross-references.',
   outputFormats: [

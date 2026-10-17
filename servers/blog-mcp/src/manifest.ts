@@ -6,7 +6,7 @@ import type { ModuleManifest } from '@zen-sci/sdk';
 export const blogManifest: ModuleManifest = {
   id: 'blog-mcp',
   name: 'Blog MCP',
-  version: '0.2.0',
+  version: '0.5.0-alpha.1',
   description:
     'Converts markdown to responsive HTML blog posts with SEO metadata, RSS feed generation, syntax highlighting, and accessibility validation.',
   outputFormats: ['html', 'email'],

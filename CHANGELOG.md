@@ -7,8 +7,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [0.5.0-alpha.1] — Prerelease Alpha (2026-10-17)
+
+First prerelease of the MCP server suite. Every package in this repo now shares one version.
+
+### Fixed
+- Fresh clones now build: `@types/mdast` added to `@zen-sci/core` devDependencies (it was only resolving through a local install)
+- CI has been red since it was added: typecheck and test jobs ran before `@zen-sci/core` and `@zen-sci/sdk` were built, so dependents could not resolve them. Root `pnpm test` and `pnpm typecheck` now build those two packages first, and CI calls the root scripts
+
+### Changed
+- All packages (root, core, sdk, 6 servers, 6 app companions) versioned `0.5.0-alpha.1`; server manifests report the same version
+- Removed stray `.DS_Store` and `packages/core/package-lock.json` (the repo uses pnpm)
+
 ### Added
 - `build:bundle` script added to all 6 server `package.json` files for reproducible esbuild bundling
+- `build:packages` root script
+
+### Not in this repo
+- The `0.4.0` and `0.4.1` entries below describe the portal (SvelteKit + Tauri) and the Go gateway. That code is not in this repository and is not part of this prerelease.
 
 ---
 

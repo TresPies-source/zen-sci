@@ -13,7 +13,11 @@ A suite of MCP servers that converts structured markdown and AI-assisted reasoni
 
 ## Current State
 
-All Phases 0–4 are **implemented and passing**. 14 packages build clean (8 server/package builds + 6 app companion builds). 493 tests across 26 test files. 6 MCP App companions ship as single-file HTML bundles.
+**Prerelease alpha: `0.5.0-alpha.1`.** APIs and output formats may still change.
+
+From a fresh clone, `pnpm install && pnpm build && pnpm test` passes: 14 packages build (2 libraries, 6 servers, 6 app companions) and 493 tests pass across 26 test files (core 129, sdk 68, latex 37, blog 76, slides 34, newsletter 63, grant 50, paper 36). CI runs typecheck, lint, test and build on every push and pull request to `main`.
+
+The portal (SvelteKit + Tauri) and the Go gateway mentioned in `CHANGELOG.md` are not in this repository.
 
 ## Directory Layout
 
@@ -68,10 +72,10 @@ pnpm install
 # Build all packages
 pnpm build
 
-# Run tests
+# Run tests (builds core and sdk first)
 pnpm test
 
-# Type-check
+# Type-check (builds core and sdk first)
 pnpm typecheck
 
 # Lint
@@ -95,4 +99,4 @@ These are optional for development — servers gracefully degrade when system de
 
 ---
 
-*Last updated: 2026-02-19*
+*Last updated: 2026-10-17*

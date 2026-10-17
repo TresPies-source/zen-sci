@@ -35,7 +35,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: pnpm -r run typecheck
+        # Builds packages/core and packages/sdk first: dependents resolve their types from dist/
+        run: pnpm run typecheck
 
   # ─── Lint ───────────────────────────────────────────────────────────────────
   lint:
@@ -57,7 +58,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm -r run lint
+        run: pnpm run lint
 
   # ─── Test ───────────────────────────────────────────────────────────────────
   test:
@@ -89,7 +90,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Test
-        run: pnpm -r run test
+        # Builds packages/core and packages/sdk first: server tests import them from dist/
+        run: pnpm run test
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4

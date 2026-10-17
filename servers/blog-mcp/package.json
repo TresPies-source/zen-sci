@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/blog-mcp",
-  "version": "0.2.0",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci Blog MCP: markdown to responsive HTML with SEO and RSS",
   "type": "module",
   "main": "./dist/index.js",

@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 const ctx = createZenSciServer({
   name: 'blog-mcp',
-  version: '0.2.0',
+  version: '0.5.0-alpha.1',
   manifest: blogManifest,
 });
 

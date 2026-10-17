@@ -6,7 +6,7 @@ import type { ModuleManifest } from '@zen-sci/sdk';
 export const newsletterManifest: ModuleManifest = {
   id: 'newsletter-mcp',
   name: 'Newsletter MCP',
-  version: '0.3.0',
+  version: '0.5.0-alpha.1',
   description:
     'Converts markdown to email-safe HTML newsletters with responsive table-based layout, inline CSS, and CAN-SPAM compliance.',
   outputFormats: ['email'],
