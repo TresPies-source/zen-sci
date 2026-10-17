@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 const ctx = createZenSciServer({
   name: 'latex-mcp',
-  version: '0.1.0',
+  version: '0.5.0-alpha.1',
   manifest: latexManifest,
 });
 

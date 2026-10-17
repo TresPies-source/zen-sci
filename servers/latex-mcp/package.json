@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/latex-mcp",
-  "version": "0.1.0",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci LaTeX MCP: markdown to publication-ready PDF",
   "type": "module",
   "main": "./dist/index.js",

@@ -6,7 +6,7 @@ import type { ModuleManifest } from '@zen-sci/sdk';
 export const slidesManifest: ModuleManifest = {
   id: 'slides-mcp',
   name: 'Slides MCP',
-  version: '0.3.0',
+  version: '0.5.0-alpha.1',
   description:
     'Converts markdown to Beamer LaTeX and Reveal.js presentations with speaker notes, math rendering, and multiple layout support.',
   outputFormats: ['beamer', 'revealjs'],

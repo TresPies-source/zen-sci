@@ -6,7 +6,7 @@ import type { ModuleManifest } from '@zen-sci/sdk';
 export const paperManifest: ModuleManifest = {
   id: 'paper-mcp',
   name: 'Paper MCP',
-  version: '0.1.0',
+  version: '0.5.0-alpha.1',
   description:
     'Generates publication-ready LaTeX for IEEE, ACM, and arXiv paper formats from markdown source.',
   outputFormats: ['paper-ieee', 'paper-acm', 'paper-arxiv'],

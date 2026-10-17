@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 const ctx = createZenSciServer({
   name: 'grant-mcp',
-  version: '0.4.0',
+  version: '0.5.0-alpha.1',
   manifest: grantManifest,
 });
 

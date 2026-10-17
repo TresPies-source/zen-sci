@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/slides-mcp",
-  "version": "0.3.0",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci Slides MCP: markdown to Beamer and Reveal.js presentations",
   "type": "module",
   "main": "./dist/index.js",

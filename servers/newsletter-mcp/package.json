@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/newsletter-mcp",
-  "version": "0.3.0",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci Newsletter MCP: markdown to email-safe HTML with CAN-SPAM compliance",
   "type": "module",
   "main": "./dist/index.js",

@@ -11,7 +11,7 @@ describe('latexManifest', () => {
   });
 
   it('has required version', () => {
-    expect(latexManifest.version).toBe('0.1.0');
+    expect(latexManifest.version).toBe('0.5.0-alpha.1');
   });
 
   it('has a description', () => {

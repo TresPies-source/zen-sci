@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/grant-mcp",
-  "version": "0.4.0",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci Grant MCP: academic grant proposals in LaTeX and Word",
   "type": "module",
   "main": "./dist/index.js",

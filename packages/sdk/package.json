@@ -1,6 +1,6 @@
 {
   "name": "@zen-sci/sdk",
-  "version": "0.0.1",
+  "version": "0.5.0-alpha.1",
   "description": "ZenSci MCP transport layer and shared server utilities",
   "type": "module",
   "main": "./dist/index.js",
